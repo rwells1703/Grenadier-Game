@@ -1,0 +1,12 @@
+{
+  "name": "grenadier-game",
+  "version": "0.1.0",
+  "description": "A game about throwing grenades",
+  "engines": {
+    "node": "12.x"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
