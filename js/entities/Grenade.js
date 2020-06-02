@@ -37,10 +37,6 @@ export class Grenade extends Entity {
     explode() {
         this.destroy();
     }
-
-    update() {
-        console.log(this.body.velocity);
-    }
 }
 
 export class ConcussionGrenade extends Grenade {

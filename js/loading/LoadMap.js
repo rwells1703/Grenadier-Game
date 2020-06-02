@@ -72,9 +72,10 @@ export function loadMap(scene, mapKey) {
         while (j < map.width) {
             if (JSON.stringify(map.pixels[i][j]) == JSON.stringify([0,0,0])) {
                 scene.platforms.add(new Platform(scene, positionToPx(j), positionToPx(i)));
-            } else if (JSON.stringify(map.pixels[i][j]) == JSON.stringify([255,0,0])) {
-                scene.player = new Player(scene, positionToPx(j), positionToPx(i));
             }
+            /*} else if (JSON.stringify(map.pixels[i][j]) == JSON.stringify([255,0,0])) {
+                //scene.players.add(new Player(scene, positionToPx(j), positionToPx(i)));
+            }*/
 
             j += 1;
         }

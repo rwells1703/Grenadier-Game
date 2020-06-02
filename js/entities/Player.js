@@ -1,24 +1,9 @@
-import { Entity } from '../entities/Entity.js';
+import { PlayerGeneric } from './PlayerGeneric.js';
 import { ConcussionGrenade } from './Grenade.js';
 
-export class Player extends Entity {
+export class Player extends PlayerGeneric {
     constructor (scene, x, y) {
-        super(scene, x, y, 'Player', false);
-
-        this.health = 15;
-
-        this.MOVE_FORCE = 500;
-        this.DRAG = 2000;
-
-        this.GRENADE_THROW_SPEED = 1200;
-        this.GRENADE_THROW_TIMEOUT = 500;
-        this.GRENADE_THROW_RANGE = 300;
-
-        this.body.drag.x = this.DRAG;
-        this.body.drag.y = this.DRAG;
-
-        this.grenadeTimer = 0;
-        this.prevGrenadeTimer = 0;
+        super(scene, x, y);
 
         // Throw a grenade
         scene.input.on('pointerdown', pointer => {
@@ -30,7 +15,6 @@ export class Player extends Entity {
                 this.prevGrenadeTimer = this.grenadeTimer;
             }
         });
-
     }
 
     throwGrenade(xTarget, yTarget, GrenadeClass) {
@@ -45,21 +29,10 @@ export class Player extends Entity {
             speedCoefficient = 1;
         }
 
-        let xVelocity = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + originEntity.body.velocity.x;
-        let yVelocity = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + originEntity.body.velocity.y;
+        let xVelocity = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.x;
+        let yVelocity = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.y;
 
-        let grenade = new GrenadeClass(this.scene, this, xVelocity, yVelocity);
-        console.log(grenade.body.velocity.x);
-        // possible error here? RESETS PHYSICS
-        //this.scene.grenades.add(grenade);
-    }
-
-    damage(damageValue) {
-        this.health -= damageValue;
-
-        if (this.health <= 0) {
-            this.health = 0;
-        }
+        new GrenadeClass(this.scene, this, xVelocity, yVelocity);
     }
 
     update(delta) {
@@ -77,6 +50,14 @@ export class Player extends Entity {
 
         // Update the timer for throwing a grenade
         this.grenadeTimer = delta;
+
+        if (this.body.velocity.x > 0) {
+            this.direction = 'R';
+        } else if (this.body.velocity.x < 0) {
+            this.direction = 'L';
+        }
+
+        this.scene.socket.emit('sendPlayerMoved', {x: this.x, y: this.y, direction: this.direction});
 
         this.updateGraphics();
     }

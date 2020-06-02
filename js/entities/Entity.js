@@ -7,10 +7,6 @@ export class Entity extends Phaser.GameObjects.Sprite {
     }
 
     updateGraphics() {
-        if (this.body.velocity.x > 0) {
-            this.play(this.texture.key + 'R', true);
-        } else if (this.body.velocity.x < 0) {
-            this.play(this.texture.key + 'L', true);
-        }
+        this.play(this.texture.key + this.direction, true);
     }
 }
