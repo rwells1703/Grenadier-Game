@@ -58,4 +58,4 @@ const server = http.createServer(function (req, res) {
 console.log("Server started");
 
 // Start the http server
-server.listen(80);
+server.listen(process.env.PORT || 5000);
