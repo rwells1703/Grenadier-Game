@@ -58,4 +58,4 @@ const server = http.createServer(function (req, res) {
 console.log("Server started");
 
 // Start the http server
-server.listen(8080);
+server.listen(80);
