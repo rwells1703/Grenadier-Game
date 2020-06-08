@@ -1,8 +1,8 @@
 import { Entity } from './Entity.js';
 
 export class PlayerGeneric extends Entity {
-    constructor (scene, x, y, id) {
-        super(scene, x, y, 'Player', false);
+    constructor (scene, xPos, yPos, id) {
+        super(scene, xPos, yPos, 'Player', false);
 
         scene.otherPlayers.add(this);
 
@@ -14,7 +14,7 @@ export class PlayerGeneric extends Entity {
         this.DRAG = 2000;
 
         this.GRENADE_THROW_SPEED = 1000;
-        this.GRENADE_THROW_TIMEOUT = 500;
+        this.GRENADE_THROW_TIMEOUT = 1000;
         this.GRENADE_THROW_RANGE = 300;
 
         this.body.drag.x = this.DRAG;
@@ -22,6 +22,8 @@ export class PlayerGeneric extends Entity {
 
         this.grenadeTimer = 0;
         this.prevGrenadeTimer = 0;
+
+        this.grenades = scene.physics.add.group();
     }
 
     damage(damageValue) {

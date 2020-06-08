@@ -1,6 +1,5 @@
 var express = require('express');
 var fs = require('fs')
-//var https = require('https');
 var http = require('http');
 var socketio = require('socket.io');
 
@@ -23,45 +22,50 @@ var players = {};
 var io = socketio.listen(server);
 
 io.on('connection', socket => {
-    console.log('user connected', socket.id);
+    console.log(socket.id, ' joined');
 
     // Populate the list of players for the new client
     for (let playerId of Object.keys(players)) {
-        socket.emit('addOtherPlayer', players[playerId]);
+        socket.emit('otherPlayerUpdate', players[playerId]);
     }
 
     // Create the new player object
     players[socket.id] = {
         id: socket.id,
-        x: 100,
-        y: 100,
-        direction: 'R'
+        xPos: 100,
+        yPos: 100,
+        xVel: 0,
+        yVel: 0,
+        grenades: {}
     };
 
-    socket.emit('addThisPlayer', players[socket.id]);
+    socket.emit('thisPlayerJoin', players[socket.id]);
 
     // Update all the current players that this player has joined
-    socket.broadcast.emit('addOtherPlayer', players[socket.id]);
+    socket.broadcast.emit('otherPlayerUpdate', players[socket.id]);
 
     socket.emit('play');
 
+    // Update the player state data
+    socket.on('thisPlayerUpdate', playerUpdate => {
+        console.log(socket.id + ' sent update');
+        players[socket.id].xPos = playerUpdate.xPos;
+        players[socket.id].yPos = playerUpdate.yPos;
+        players[socket.id].xVel = playerUpdate.xVel;
+        players[socket.id].yVel = playerUpdate.yVel;
+        players[socket.id].grenades = playerUpdate.grenades;
+
+        // emit a message to all players about the player that moved
+        socket.broadcast.emit('otherPlayerUpdate', players[socket.id]);
+    });
+
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
-        console.log('user disconnected: ', socket.id);
+        console.log(socket.id, ' left');
         delete players[socket.id];
 
         // Inform the current players that this player has left
-        io.emit('disconnect', socket.id);
-    });
-
-    // when a player moves, update the player data
-    socket.on('sendPlayerMoved', newState => {
-        players[socket.id].x = newState.x;
-        players[socket.id].y = newState.y;
-        players[socket.id].direction = newState.direction;
-
-        // emit a message to all players about the player that moved
-        socket.broadcast.emit('receivePlayerMoved', players[socket.id]);
+        socket.broadcast.emit('removeOtherPlayer', socket.id);
     });
 });
 

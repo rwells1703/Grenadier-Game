@@ -1,15 +1,18 @@
 import { PlayerGeneric } from './PlayerGeneric.js';
-import { ConcussionGrenade } from './Grenade.js';
+import { Grenade } from './Grenade.js';
 
 export class Player extends PlayerGeneric {
-    constructor (scene, x, y) {
-        super(scene, x, y);
+    constructor (scene, xPos, yPos, id) {
+        super(scene, xPos, yPos, id);
+
+        // Increments every time a grenade is thrown
+        this.grenadeId = 0;
 
         // Throw a grenade
         scene.input.on('pointerdown', pointer => {
             // If enough time has passed since the last grenade was thrown
             if (this.grenadeTimer > this.GRENADE_THROW_TIMEOUT) {
-                this.throwGrenade(pointer.worldX, pointer.worldY, ConcussionGrenade);
+                this.throwGrenade(pointer.worldX, pointer.worldY, "ConcussionGrenade");
 
                 // Reset the timer
                 this.prevGrenadeTimer = this.grenadeTimer;
@@ -17,7 +20,7 @@ export class Player extends PlayerGeneric {
         });
     }
 
-    throwGrenade(xTarget, yTarget, GrenadeClass) {
+    throwGrenade(xTarget, yTarget, grenadeType) {
         let xDistance = xTarget - this.x;
         let yDistance = yTarget - this.y;
         let distance = Math.sqrt(xDistance**2 + yDistance**2);
@@ -29,13 +32,17 @@ export class Player extends PlayerGeneric {
             speedCoefficient = 1;
         }
 
-        let xVelocity = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.x;
-        let yVelocity = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.y;
+        let xVel = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.x;
+        let yVel = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.y;
 
-        new GrenadeClass(this.scene, this, xVelocity, yVelocity);
+        new Grenade(this.scene, this.x, this.y, grenadeType, this.grenadeId, this, xVel, yVel);
+
+        this.grenadeId += 1;
     }
 
     update(delta) {
+        //this.body.velocity.x = 0.1*this.MOVE_FORCE;
+
         if (this.scene.keys["A"].isDown && !this.body.blocked.left) {
             this.body.velocity.x = -this.MOVE_FORCE;
         } else if (this.scene.keys["D"].isDown && !this.body.blocked.right) {
@@ -56,8 +63,6 @@ export class Player extends PlayerGeneric {
         } else if (this.body.velocity.x < 0) {
             this.direction = 'L';
         }
-
-        this.scene.socket.emit('sendPlayerMoved', {x: this.x, y: this.y, direction: this.direction});
 
         this.updateGraphics();
     }

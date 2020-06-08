@@ -1,6 +1,6 @@
 export class Entity extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, textureName, staticBody) {
-        super(scene, x, y, textureName);
+    constructor(scene, xPos, yPos, textureName, staticBody) {
+        super(scene, xPos, yPos, textureName);
         
         scene.add.existing(this);
         scene.physics.add.existing(this, staticBody);

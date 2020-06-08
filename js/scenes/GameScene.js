@@ -3,6 +3,7 @@ import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
 import { parseSpriteSheets } from '../loading/LoadGraphics.js';
 import { PlayerGeneric } from '../entities/PlayerGeneric.js';
 import { Player } from '../entities/Player.js';
+import { Grenade } from '../entities/Grenade.js';
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -29,6 +30,8 @@ export class GameScene extends Phaser.Scene {
 
         this.mapComplete = false;
 
+        this.updateCounter = 0;
+
         this.platforms = this.physics.add.staticGroup();
         this.grenades = this.physics.add.group();
         this.otherPlayers = this.physics.add.group();
@@ -37,12 +40,8 @@ export class GameScene extends Phaser.Scene {
 
         this.socket = io();
 
-        this.socket.on('addOtherPlayer', player => {
-            new PlayerGeneric(this, player.x, player.y, player.id);
-        });
-
-        this.socket.on('addThisPlayer', player => {
-            this.player = new Player(this, player.x, player.y, player.id);
+        this.socket.on('thisPlayerJoin', player => {
+            this.player = new Player(this, player.xPos, player.yPos, player.id);
         });
 
         this.socket.on('play', () => {
@@ -56,8 +55,7 @@ export class GameScene extends Phaser.Scene {
     
             this.physics.add.collider(this.player, this.platforms);
             this.physics.add.collider(this.otherPlayers, this.platforms);
-    
-    
+
             this.cameras.main.startFollow(this.player);
     
             this.cameras.main.setBounds(0, 0, map_width*TEXTURE_SIZE, map_height*TEXTURE_SIZE);
@@ -67,16 +65,57 @@ export class GameScene extends Phaser.Scene {
             this.connected = true;
         });
 
-        this.socket.on('receivePlayerMoved', player => {
+        this.socket.on('otherPlayerLeave', playerId => {
             for (let otherPlayer of this.otherPlayers.children.entries) {
-                if (otherPlayer.id == player.id) {
-                    otherPlayer.x = player.x;
-                    otherPlayer.y = player.y;
-                    otherPlayer.direction = player.direction;
+                if (otherPlayer.id == playerId) {
+                    otherPlayer.destroy();
                 }
             }
         });
 
+        this.socket.on('otherPlayerUpdate', updatedPlayer => {
+            for (let otherPlayer of this.otherPlayers.children.entries) {
+                if (otherPlayer.id == updatedPlayer.id) {
+                    // They are an existing player, so update their status
+                    otherPlayer.x = updatedPlayer.xPos;
+                    otherPlayer.y = updatedPlayer.yPos;
+                    otherPlayer.body.velocity.x = updatedPlayer.xVel;
+                    otherPlayer.body.velocity.y = updatedPlayer.yVel;
+
+                    for (let grenadeId of Object.keys(updatedPlayer.grenades)) {
+                        let updatedGrenade = updatedPlayer.grenades[grenadeId];
+
+                        for (let grenade of otherPlayer.grenades.children.entries) {
+                            if (grenade.id == updatedGrenade.id) {
+                                grenade.x = updatedGrenade.xPos;
+                                grenade.y = updatedGrenade.yPos;
+                                grenade.body.velocity.x = updatedGrenade.xVel;
+                                grenade.body.velocity.y = updatedGrenade.yVel;
+                            } else {
+                                new Grenade(
+                                    this,
+                                    updatedGrenade.xPos,
+                                    updatedGrenade.yPos,
+                                    updatedGrenade.type,
+                                    updatedGrenade.id,
+                                    otherPlayer,
+                                    updatedGrenade.xVel,
+                                    updatedGrenade.yVel
+                                );
+                            }
+                        }
+                    }
+                } else {
+                    // They are a new player, so create a new game object for them
+                    new PlayerGeneric(
+                        this,
+                        updatedPlayer.xPos,
+                        updatedPlayer.yPos,
+                        updatedPlayer.id
+                    );
+                }
+            }
+        });
     }
 
     update(delta) {
@@ -85,9 +124,33 @@ export class GameScene extends Phaser.Scene {
                 // Handles keyboard input every frame
                 this.player.update(delta);
 
+                if (this.updateCounter % 10 == 0) {
+                    let playerUpdate = {
+                        xPos: this.player.x,
+                        yPos: this.player.y,
+                        xVel: this.player.body.velocity.x,
+                        yVel: this.player.body.velocity.y,
+                        grenades: {}
+                    };
+
+                    for (let grenade of this.player.grenades.children.entries) {
+                        playerUpdate.grenades[grenade.id] = {
+                            id: grenade.id,
+                            xPos: grenade.x,
+                            yPos: grenade.y,
+                            xVel: grenade.body.velocity.x,
+                            yVel: grenade.body.velocity.y
+                        };
+                    }
+                    
+                    this.socket.emit('thisPlayerUpdate', playerUpdate);
+                }
+
                 for (let otherPlayer of this.otherPlayers.children.entries) {
                     otherPlayer.updateGraphics();
                 }
+
+                this.updateCounter++;
             } else {
                 // If the map has been completed
                 this.registry.destroy();
