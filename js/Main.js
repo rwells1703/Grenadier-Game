@@ -2,6 +2,7 @@ import { WINDOW_WIDTH, WINDOW_HEIGHT } from './Constants.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { GameScene } from './scenes/GameScene.js';
 import { WinScene } from './scenes/WinScene.js';
+import { DisconnectedScene } from './scenes/DisconnectedScene.js';
 
 let config = {
     type: Phaser.AUTO,
@@ -11,7 +12,7 @@ let config = {
     },
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
-    scene: [MenuScene, GameScene, WinScene],
+    scene: [MenuScene, GameScene, WinScene, DisconnectedScene],
     audio: { noAudio: true }
 };
 

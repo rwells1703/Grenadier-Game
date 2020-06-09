@@ -11,7 +11,7 @@ export class GameScene extends Phaser.Scene {
             key: 'GameScene',
             physics: {
                 default: 'arcade',
-                arcade: {debug: true}
+                arcade: {debug: false}
             }
         });
     }
@@ -41,7 +41,21 @@ export class GameScene extends Phaser.Scene {
         this.socket = io();
 
         this.socket.on('thisPlayerJoin', player => {
-            this.player = new Player(this, player.xPos, player.yPos, player.id);
+            this.player = new Player(
+                this,
+                player.xPos,
+                player.yPos,
+                player.id
+            );
+        });
+
+        this.socket.on('otherPlayerAdd', otherPlayer => {
+            new PlayerGeneric(
+                this,
+                otherPlayer.xPos,
+                otherPlayer.yPos,
+                otherPlayer.id
+            );
         });
 
         this.socket.on('play', () => {
@@ -73,48 +87,18 @@ export class GameScene extends Phaser.Scene {
             }
         });
 
-        this.socket.on('otherPlayerUpdate', updatedPlayer => {
-            for (let otherPlayer of this.otherPlayers.children.entries) {
-                if (otherPlayer.id == updatedPlayer.id) {
-                    // They are an existing player, so update their status
-                    otherPlayer.x = updatedPlayer.xPos;
-                    otherPlayer.y = updatedPlayer.yPos;
-                    otherPlayer.body.velocity.x = updatedPlayer.xVel;
-                    otherPlayer.body.velocity.y = updatedPlayer.yVel;
-
-                    for (let grenadeId of Object.keys(updatedPlayer.grenades)) {
-                        let updatedGrenade = updatedPlayer.grenades[grenadeId];
-
-                        for (let grenade of otherPlayer.grenades.children.entries) {
-                            if (grenade.id == updatedGrenade.id) {
-                                grenade.x = updatedGrenade.xPos;
-                                grenade.y = updatedGrenade.yPos;
-                                grenade.body.velocity.x = updatedGrenade.xVel;
-                                grenade.body.velocity.y = updatedGrenade.yVel;
-                            } else {
-                                new Grenade(
-                                    this,
-                                    updatedGrenade.xPos,
-                                    updatedGrenade.yPos,
-                                    updatedGrenade.type,
-                                    updatedGrenade.id,
-                                    otherPlayer,
-                                    updatedGrenade.xVel,
-                                    updatedGrenade.yVel
-                                );
-                            }
-                        }
-                    }
-                } else {
-                    // They are a new player, so create a new game object for them
-                    new PlayerGeneric(
-                        this,
-                        updatedPlayer.xPos,
-                        updatedPlayer.yPos,
-                        updatedPlayer.id
-                    );
+        this.socket.on('otherPlayerMove', movementUpdate => {
+            this.otherPlayers.getChildren().forEach(function (otherPlayer) {
+                if (movementUpdate.id === otherPlayer.id) {
+                  otherPlayer.setPosition(movementUpdate.xPos, movementUpdate.yPos);
+                  otherPlayer.body.velocity.x = movementUpdate.xVel;
+                  otherPlayer.body.velocity.y = movementUpdate.yVel;
                 }
-            }
+            });
+        });
+
+        this.socket.on("disconnect", () => {
+            this.scene.start('DisconnectedScene');
         });
     }
 
@@ -123,34 +107,24 @@ export class GameScene extends Phaser.Scene {
             if (!this.mapComplete) {
                 // Handles keyboard input every frame
                 this.player.update(delta);
-
-                if (this.updateCounter % 10 == 0) {
-                    let playerUpdate = {
+                
+                if (this.player.x != this.player.xPrev || this.player.y != this.player.yPrev) {
+                    let movementUpdate = {
                         xPos: this.player.x,
                         yPos: this.player.y,
                         xVel: this.player.body.velocity.x,
-                        yVel: this.player.body.velocity.y,
-                        grenades: {}
+                        yVel: this.player.body.velocity.y
                     };
 
-                    for (let grenade of this.player.grenades.children.entries) {
-                        playerUpdate.grenades[grenade.id] = {
-                            id: grenade.id,
-                            xPos: grenade.x,
-                            yPos: grenade.y,
-                            xVel: grenade.body.velocity.x,
-                            yVel: grenade.body.velocity.y
-                        };
-                    }
-                    
-                    this.socket.emit('thisPlayerUpdate', playerUpdate);
+                    this.player.xPrev = this.player.x;
+                    this.player.yPrev = this.player.y;
+
+                    this.socket.emit('thisPlayerMove', movementUpdate);
                 }
 
-                for (let otherPlayer of this.otherPlayers.children.entries) {
-                    otherPlayer.updateGraphics();
-                }
-
-                this.updateCounter++;
+                this.otherPlayers.getChildren().forEach(function (otherPlayer) {
+                    otherPlayer.update();
+                });
             } else {
                 // If the map has been completed
                 this.registry.destroy();

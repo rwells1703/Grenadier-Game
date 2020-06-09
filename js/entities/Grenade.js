@@ -48,6 +48,7 @@ export class Grenade extends Entity {
     }
 
     explode() {
+        this.scene.cameras.main.shake(200, 0.01);
         this.destroy();
     }
 }

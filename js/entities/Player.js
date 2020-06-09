@@ -7,16 +7,20 @@ export class Player extends PlayerGeneric {
 
         // Increments every time a grenade is thrown
         this.grenadeId = 0;
+    
+        this.grenadeTimer = 0;
+        this.prevGrenadeTimer = 0;
 
         // Throw a grenade
         scene.input.on('pointerdown', pointer => {
-            // If enough time has passed since the last grenade was thrown
-            if (this.grenadeTimer > this.GRENADE_THROW_TIMEOUT) {
-                this.throwGrenade(pointer.worldX, pointer.worldY, "ConcussionGrenade");
+            this.throwGrenade(pointer.worldX, pointer.worldY, "ConcussionGrenade");
 
-                // Reset the timer
-                this.prevGrenadeTimer = this.grenadeTimer;
-            }
+            // Reset the timer
+            this.prevGrenadeTimer = this.grenadeTimer;
+            // If enough time has passed since the last grenade was thrown
+            /*if (this.grenadeTimer - this.prevGrenadeTimer > this.GRENADE_THROW_TIMEOUT) {
+
+            }*/
         });
     }
 
@@ -58,12 +62,6 @@ export class Player extends PlayerGeneric {
         // Update the timer for throwing a grenade
         this.grenadeTimer = delta;
 
-        if (this.body.velocity.x > 0) {
-            this.direction = 'R';
-        } else if (this.body.velocity.x < 0) {
-            this.direction = 'L';
-        }
-
-        this.updateGraphics();
+        super.update();
     }
 }

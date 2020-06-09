@@ -20,9 +20,6 @@ export class PlayerGeneric extends Entity {
         this.body.drag.x = this.DRAG;
         this.body.drag.y = this.DRAG;
 
-        this.grenadeTimer = 0;
-        this.prevGrenadeTimer = 0;
-
         this.grenades = scene.physics.add.group();
     }
 
@@ -35,6 +32,12 @@ export class PlayerGeneric extends Entity {
     }
 
     update() {
+        if (this.body.velocity.x > 0) {
+            this.direction = 'R';
+        } else if (this.body.velocity.x < 0) {
+            this.direction = 'L';
+        }
+
         this.updateGraphics();
     }
 }

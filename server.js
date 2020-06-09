@@ -22,50 +22,49 @@ var players = {};
 var io = socketio.listen(server);
 
 io.on('connection', socket => {
-    console.log(socket.id, ' joined');
-
     // Populate the list of players for the new client
     for (let playerId of Object.keys(players)) {
-        socket.emit('otherPlayerUpdate', players[playerId]);
+        socket.emit('otherPlayerAdd', players[playerId]);
     }
 
     // Create the new player object
     players[socket.id] = {
         id: socket.id,
-        xPos: 100,
-        yPos: 100,
+        xPos: 128,
+        yPos: 128,
         xVel: 0,
-        yVel: 0,
-        grenades: {}
+        yVel: 0
     };
+
+    console.log(socket.id, ' joined (', Object.keys(players).length,')');
 
     socket.emit('thisPlayerJoin', players[socket.id]);
 
     // Update all the current players that this player has joined
-    socket.broadcast.emit('otherPlayerUpdate', players[socket.id]);
+    socket.broadcast.emit('otherPlayerAdd', players[socket.id]);
 
     socket.emit('play');
 
     // Update the player state data
-    socket.on('thisPlayerUpdate', playerUpdate => {
-        console.log(socket.id + ' sent update');
-        players[socket.id].xPos = playerUpdate.xPos;
-        players[socket.id].yPos = playerUpdate.yPos;
-        players[socket.id].xVel = playerUpdate.xVel;
-        players[socket.id].yVel = playerUpdate.yVel;
-        players[socket.id].grenades = playerUpdate.grenades;
+    socket.on('thisPlayerMove', movementUpdate => {
+        //console.log(socket.id + ' moved');
+        players[socket.id].xPos = movementUpdate.xPos;
+        players[socket.id].yPos = movementUpdate.yPos;
+        players[socket.id].xVel = movementUpdate.xVel;
+        players[socket.id].yVel = movementUpdate.yVel;
 
         // emit a message to all players about the player that moved
-        socket.broadcast.emit('otherPlayerUpdate', players[socket.id]);
+        socket.broadcast.emit('otherPlayerMove', players[socket.id]);
     });
 
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
-        console.log(socket.id, ' left');
         delete players[socket.id];
 
+        console.log(socket.id, ' left (', Object.keys(players).length,')');
+
         // Inform the current players that this player has left
-        socket.broadcast.emit('removeOtherPlayer', socket.id);
+        socket.broadcast.emit('otherPlayerLeave', socket.id);
     });
 });
 
