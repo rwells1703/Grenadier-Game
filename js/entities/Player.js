@@ -17,6 +17,7 @@ export class Player extends PlayerGeneric {
 
             // Reset the timer
             this.prevGrenadeTimer = this.grenadeTimer;
+
             // If enough time has passed since the last grenade was thrown
             /*if (this.grenadeTimer - this.prevGrenadeTimer > this.GRENADE_THROW_TIMEOUT) {
 
@@ -39,14 +40,22 @@ export class Player extends PlayerGeneric {
         let xVel = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.x;
         let yVel = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.y;
 
-        new Grenade(this.scene, this.x, this.y, grenadeType, this.grenadeId, this, xVel, yVel);
+        let grenade = new Grenade(this.scene, this.x, this.y, grenadeType, this.grenadeId, this, xVel, yVel);
+
+        let newGrenade = {
+            grenadeId: grenade.id,
+            xPos: this.x,
+            yPos: this.y,
+            xVel: xVel,
+            yVel: yVel
+        };
+
+        this.scene.socket.emit('thisPlayerThrowGrenade', newGrenade);
 
         this.grenadeId += 1;
     }
 
     update(delta) {
-        //this.body.velocity.x = 0.1*this.MOVE_FORCE;
-
         if (this.scene.keys["A"].isDown && !this.body.blocked.left) {
             this.body.velocity.x = -this.MOVE_FORCE;
         } else if (this.scene.keys["D"].isDown && !this.body.blocked.right) {

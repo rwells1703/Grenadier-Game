@@ -1,5 +1,4 @@
 import { TEXTURE_SIZE } from '../Constants.js';
-import { Player } from '../entities/Player.js';
 import { Platform } from '../entities/Platform.js';
 
 // Loads a 24-bit bitmap image from the map file
@@ -73,9 +72,6 @@ export function loadMap(scene, mapKey) {
             if (JSON.stringify(map.pixels[i][j]) == JSON.stringify([0,0,0])) {
                 scene.platforms.add(new Platform(scene, positionToPx(j), positionToPx(i)));
             }
-            /*} else if (JSON.stringify(map.pixels[i][j]) == JSON.stringify([255,0,0])) {
-                //scene.players.add(new Player(scene, positionToPx(j), positionToPx(i)));
-            }*/
 
             j += 1;
         }

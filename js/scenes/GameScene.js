@@ -1,6 +1,6 @@
 import { TEXTURE_SIZE } from '../Constants.js';
+import { loadImages, loadSounds, parseSpriteSheets } from '../loading/LoadGraphics.js';
 import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
-import { parseSpriteSheets } from '../loading/LoadGraphics.js';
 import { PlayerGeneric } from '../entities/PlayerGeneric.js';
 import { Player } from '../entities/Player.js';
 import { Grenade } from '../entities/Grenade.js';
@@ -22,13 +22,15 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
+        loadImages(this);
+        loadSounds(this);
         loadMapBmp(this);
     }
 
     create() {
         parseSpriteSheets(this);
 
-        this.mapComplete = false;
+        this.gameOver = false;
 
         this.updateCounter = 0;
 
@@ -88,23 +90,41 @@ export class GameScene extends Phaser.Scene {
         });
 
         this.socket.on('otherPlayerMove', movementUpdate => {
-            this.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            for (let otherPlayer of this.otherPlayers.getChildren()) {
                 if (movementUpdate.id === otherPlayer.id) {
                   otherPlayer.setPosition(movementUpdate.xPos, movementUpdate.yPos);
                   otherPlayer.body.velocity.x = movementUpdate.xVel;
                   otherPlayer.body.velocity.y = movementUpdate.yVel;
                 }
-            });
+            }
+        });
+
+        this.socket.on('otherPlayerThrowGrenade', newGrenade => {
+            for (let otherPlayer of this.otherPlayers.getChildren()) {
+                if (newGrenade.playerId == otherPlayer.id) {
+                    new Grenade(
+                        this,
+                        newGrenade.xPos,
+                        newGrenade.yPos,
+                        'ConcussionGrenade',
+                        newGrenade.grenadeId,
+                        otherPlayer,
+                        newGrenade.xVel,
+                        newGrenade.yVel
+                    );
+                }
+            }
         });
 
         this.socket.on("disconnect", () => {
             this.scene.start('DisconnectedScene');
+            this.socket.disconnect();
         });
     }
 
     update(delta) {
         if (this.connected) {
-            if (!this.mapComplete) {
+            if (!this.gameOver) {
                 // Handles keyboard input every frame
                 this.player.update(delta);
                 
@@ -122,9 +142,9 @@ export class GameScene extends Phaser.Scene {
                     this.socket.emit('thisPlayerMove', movementUpdate);
                 }
 
-                this.otherPlayers.getChildren().forEach(function (otherPlayer) {
+                for (let otherPlayer of this.otherPlayers.getChildren()) {
                     otherPlayer.update();
-                });
+                }
             } else {
                 // If the map has been completed
                 this.registry.destroy();

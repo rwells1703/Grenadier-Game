@@ -27,7 +27,14 @@ export class PlayerGeneric extends Entity {
         this.health -= damageValue;
 
         if (this.health <= 0) {
-            this.health = 0;
+            if (this.id == this.scene.player.id) {
+                this.scene.scene.start('LoseScene');
+                this.scene.gameOver = true;
+                this.scene.events.off();
+                this.scene.registry.destroy();
+            }
+            
+            this.destroy();
         }
     }
 

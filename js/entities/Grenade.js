@@ -22,6 +22,8 @@ export class Grenade extends Entity {
             bounce = 0.6;
             maxBounces = 3;
             fuseTime = 1500;
+            this.radius = 64;
+            this.damage = 5;
         }
 
         this.body.drag.x = drag;
@@ -48,7 +50,26 @@ export class Grenade extends Entity {
     }
 
     explode() {
-        this.scene.cameras.main.shake(200, 0.01);
+        // Too many camera shakes at once cause the camera object
+        // to be out of scope for some reason
+        // Possible phaser bug
+        try {
+            this.scene.cameras.main.shake(200, 0.01);
+
+            for (let otherPlayer of this.scene.otherPlayers.getChildren()) {
+                this.applyDamage(otherPlayer);
+            }
+            this.applyDamage(this.scene.player);
+        } catch {}
+
         this.destroy();
+        
+    }
+
+    applyDamage(player) {
+        let distance = this.getDistanceFromPoint(player.x, player.y);
+        if (distance < this.radius) {
+            player.damage(this.damage);
+        }
     }
 }

@@ -6,6 +6,10 @@ export function loadImages(scene) {
     scene.load.spritesheet('Player', 'assets/sprites/entities/player.png', {frameWidth: 48, frameHeight: 64});
 }
 
+export function loadSounds(scene) {
+    scene.load.audio('ButtonSound', 'assets/sounds/to.wav');
+}
+
 export function parseSpriteSheets(scene) {
     parseSpriteSheet(scene, 'ConcussionGrenade', 1, 1, false);
     parseSpriteSheet(scene, 'Platform', 1, 1, false);

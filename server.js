@@ -1,8 +1,6 @@
 var express = require('express');
-var fs = require('fs')
 var http = require('http');
 var socketio = require('socket.io');
-
 
 var app = express();
 
@@ -33,7 +31,8 @@ io.on('connection', socket => {
         xPos: 128,
         yPos: 128,
         xVel: 0,
-        yVel: 0
+        yVel: 0,
+        grenades: {}
     };
 
     console.log(socket.id, ' joined (', Object.keys(players).length,')');
@@ -55,6 +54,23 @@ io.on('connection', socket => {
 
         // emit a message to all players about the player that moved
         socket.broadcast.emit('otherPlayerMove', players[socket.id]);
+    });
+
+    // Update the player state data
+    socket.on('thisPlayerThrowGrenade', newGrenade => {
+        //console.log(socket.id, ' threw grenade');
+        players[socket.id].grenades[newGrenade.grenadeId] = {};
+        players[socket.id].grenades[newGrenade.grenadeId].xPos = newGrenade.xPos;
+        players[socket.id].grenades[newGrenade.grenadeId].yPos = newGrenade.yPos;
+        players[socket.id].grenades[newGrenade.grenadeId].xVel = newGrenade.xVel;
+        players[socket.id].grenades[newGrenade.grenadeId].yVel = newGrenade.yVel;
+
+        // Add the extra information of the player id
+        // so that other players will know who shot it
+        newGrenade.playerId = socket.id;
+
+        // Emit a message to all players about the new grenade
+        socket.broadcast.emit('otherPlayerThrowGrenade', newGrenade);
     });
 
     // when a player disconnects, remove them from our players object
