@@ -9,6 +9,8 @@ export class Grenade extends Entity {
 
         // REMOVE FOR BEST PIXEL ART LOOK
         this.scale = 0.5;
+        this.rotation = Math.random()*360;
+        this.body.angularVelocity = Math.random()*100;
 
         this.id = id;
         this.playerId = id;

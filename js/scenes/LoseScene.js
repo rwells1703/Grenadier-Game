@@ -19,18 +19,18 @@ export class LoseScene extends Phaser.Scene {
         WebFont.load({
             google: {families: ['Roboto Mono']},
             active: () => {
-                this.message = this.add.text(100, 100, 'You lose!', {font: '60px Roboto Mono', color:'#FFFFFF'});
-                this.moreInfo = this.add.text(100, 200, '(General Kenobi)', {font: '14px Roboto Mono', color: '#FFFFFF'});
+                this.message = this.add.text(100, 100, 'You lose!', {font: '60px Roboto Mono', color:'#000000'});
+                this.moreInfo = this.add.text(100, 200, '(General Kenobi)', {font: '14px Roboto Mono', color: '#000000'});
 
                 this.btnSoundFX = this.sound.add('ButtonSound');
         
-                this.replayButton = this.add.text(100, 450, 'Play again', {font: '35px Roboto Mono', color: '#FFFFFF'});
+                this.replayButton = this.add.text(100, 450, 'Play again', {font: '35px Roboto Mono', color: '#000000'});
                 this.replayButton.setInteractive();
                 this.replayButton.on('pointerover', () => {
                     this.replayButton.setColor('#FF0000');
                 });
                 this.replayButton.on('pointerout', () => {
-                    this.replayButton.setColor('#FFFFFF');
+                    this.replayButton.setColor('#000000');
                 });
                 this.replayButton.on('pointerdown', () => {
                     this.btnSoundFX.play();

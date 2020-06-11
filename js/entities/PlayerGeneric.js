@@ -6,6 +6,8 @@ export class PlayerGeneric extends Entity {
 
         scene.otherPlayers.add(this);
 
+        this.scale = 0.25;
+
         this.id = id;
         this.health = 15;
         this.direction = 'R';
@@ -41,8 +43,12 @@ export class PlayerGeneric extends Entity {
     update() {
         if (this.body.velocity.x > 0) {
             this.direction = 'R';
+            this.movement = 'Moving'
         } else if (this.body.velocity.x < 0) {
             this.direction = 'L';
+            this.movement = 'Moving';
+        } else {
+            this.movement = 'Stationary';
         }
 
         this.updateGraphics();

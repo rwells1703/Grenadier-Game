@@ -19,18 +19,18 @@ export class DisconnectedScene extends Phaser.Scene {
         WebFont.load({
             google: {families: ['Roboto Mono']},
             active: () => {
-                this.message = this.add.text(100, 100, 'Network error!', {font: '60px Roboto Mono', color:'#FFFFFF'});
-                this.moreInfo = this.add.text(100, 200, 'You have lost connection with the server', {font: '25px Roboto Mono', color: '#FFFFFF'});
+                this.message = this.add.text(100, 100, 'Network error!', {font: '60px Roboto Mono', color:'#000000'});
+                this.moreInfo = this.add.text(100, 200, 'You have lost connection with the server', {font: '25px Roboto Mono', color: '#000000'});
 
                 this.btnSoundFX = this.sound.add('ButtonSound');
         
-                this.reloadButton = this.add.text(100, 450, 'Reload game', {font: '35px Roboto Mono', color: '#FFFFFF'});
+                this.reloadButton = this.add.text(100, 450, 'Reload game', {font: '35px Roboto Mono', color: '#000000'});
                 this.reloadButton.setInteractive();
                 this.reloadButton.on('pointerover', () => {
                     this.reloadButton.setColor('#FF0000');
                 });
                 this.reloadButton.on('pointerout', () => {
-                    this.reloadButton.setColor('#FFFFFF');
+                    this.reloadButton.setColor('#000000');
                 });
                 this.reloadButton.on('pointerdown', () => {
                     this.btnSoundFX.play();

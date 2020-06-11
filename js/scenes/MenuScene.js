@@ -19,18 +19,18 @@ export class MenuScene extends Phaser.Scene {
         WebFont.load({
             google: {families: ['Roboto Mono']},
             active: () => {
-                this.gameTitle = this.add.text(100, 100, 'Grenadier Game', {font: '60px Roboto Mono', color:'#FFFFFF'});
-                this.credits = this.add.text(100, 200, 'Developed by Richard Wells', {font: '25px Roboto Mono', color: '#FFFFFF'});
+                this.gameTitle = this.add.text(100, 100, 'Grenadier Game', {font: '60px Roboto Mono', color:'#000000'});
+                this.credits = this.add.text(100, 200, 'Developed by Richard Wells', {font: '25px Roboto Mono', color: '#000000'});
 
                 this.btnSoundFX = this.sound.add('ButtonSound');
         
-                this.backButton = this.add.text(100, 450, 'Play', {font: '35px Roboto Mono', color: '#FFFFFF'});
+                this.backButton = this.add.text(100, 450, 'Play', {font: '35px Roboto Mono', color: '#000000'});
                 this.backButton.setInteractive();
                 this.backButton.on('pointerover', () => {
                     this.backButton.setColor('#FF0000');
                 });
                 this.backButton.on('pointerout', () => {
-                    this.backButton.setColor('#FFFFFF');
+                    this.backButton.setColor('#000000');
                 });
                 this.backButton.on('pointerdown', () => {
                     this.btnSoundFX.play();
