@@ -61,10 +61,22 @@ export class Grenade extends Entity {
             for (let otherPlayer of this.scene.otherPlayers.getChildren()) {
                 this.applyDamage(otherPlayer);
             }
+
             this.applyDamage(this.scene.player);
+            
+            this.play('Explosion', true);
+            this.rotation = 0;
+            this.angularVelocity = 0;
+            this.scale = 1;
+    
+            this.scene.time.addEvent({
+                delay: 500,
+                callback: this.destroy,
+                callbackScope: this
+            });
         } catch {}
 
-        this.destroy();
+
         
     }
 
