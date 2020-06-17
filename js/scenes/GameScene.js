@@ -1,8 +1,8 @@
 import { TEXTURE_SIZE } from '../Constants.js';
 import { loadImages, loadSounds, parseSpriteSheets } from '../loading/LoadGraphics.js';
 import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
-import { PlayerGeneric } from '../entities/PlayerGeneric.js';
-import { Player } from '../entities/Player.js';
+import { PlayerEnemy } from '../entities/PlayerEnemy.js';
+import { PlayerThis } from '../entities/PlayerThis.js';
 import { Grenade } from '../entities/Grenade.js';
 
 export class GameScene extends Phaser.Scene {
@@ -11,7 +11,7 @@ export class GameScene extends Phaser.Scene {
             key: 'GameScene',
             physics: {
                 default: 'arcade',
-                arcade: {debug: false}
+                arcade: {debug: true}
             }
         });
     }
@@ -43,7 +43,7 @@ export class GameScene extends Phaser.Scene {
         this.socket = io();
 
         this.socket.on('thisPlayerJoin', player => {
-            this.player = new Player(
+            this.player = new PlayerThis(
                 this,
                 player.xPos,
                 player.yPos,
@@ -52,7 +52,7 @@ export class GameScene extends Phaser.Scene {
         });
 
         this.socket.on('otherPlayerAdd', otherPlayer => {
-            new PlayerGeneric(
+            new PlayerEnemy(
                 this,
                 otherPlayer.xPos,
                 otherPlayer.yPos,
@@ -144,6 +144,10 @@ export class GameScene extends Phaser.Scene {
 
                 for (let otherPlayer of this.otherPlayers.getChildren()) {
                     otherPlayer.update();
+                }
+
+                for (let grenade of this.grenades.getChildren()) {
+                    grenade.update(delta);
                 }
             } else {
                 // If the map has been completed

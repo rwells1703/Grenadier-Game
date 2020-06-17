@@ -23,7 +23,7 @@ export class Grenade extends Entity {
             drag = 1000;
             bounce = 0.6;
             maxBounces = 3;
-            fuseTime = 1500;
+            this.fuseTime = 1500;
             this.radius = 64;
             this.damage = 5;
         }
@@ -36,11 +36,8 @@ export class Grenade extends Entity {
         this.GRENADE_MAX_BOUNCES = maxBounces;
         this.bounceCount = 0;
 
-        this.scene.time.addEvent({
-            delay: fuseTime,
-            callback: this.explode,
-            callbackScope: this
-        });
+        this.exploded = false;
+        this.thrownDelta = scene.time.now;
     }
 
     addBounce() {
@@ -52,38 +49,42 @@ export class Grenade extends Entity {
     }
 
     explode() {
-        // Too many camera shakes at once cause the camera object
-        // to be out of scope for some reason
-        // Possible phaser bug
-        try {
-            this.scene.cameras.main.shake(200, 0.01);
+        this.exploded = true;
+        let distance = this.getDistanceFromPoint(this.scene.player.x, this.scene.player.y);
 
-            for (let otherPlayer of this.scene.otherPlayers.getChildren()) {
-                this.applyDamage(otherPlayer);
-            }
+        this.applyDamage(this.scene.player, distance);
 
-            this.applyDamage(this.scene.player);
-            
-            this.play('Explosion', true);
-            this.rotation = 0;
-            this.angularVelocity = 0;
-            this.scale = 1;
-    
-            this.scene.time.addEvent({
-                delay: 500,
-                callback: this.destroy,
-                callbackScope: this
-            });
-        } catch {}
+        let cameraShakeRadius = 448;
+        if (distance <= cameraShakeRadius) {
+            this.scene.cameras.main.shake(cameraShakeRadius/distance*200, 0.01);
+        }
 
+        for (let otherPlayer of this.scene.otherPlayers.getChildren()) {
+            distance = this.getDistanceFromPoint(otherPlayer.x, otherPlayer.y);
+            this.applyDamage(otherPlayer, distance);
+        }
 
-        
+        this.play('Explosion', true);
+        this.rotation = 0;
+        this.body.angularVelocity = 0;
+        this.scale = 1;
+
+        this.scene.time.addEvent({
+            delay: 500,
+            callback: this.destroy,
+            callbackScope: this
+        });
     }
 
-    applyDamage(player) {
-        let distance = this.getDistanceFromPoint(player.x, player.y);
+    applyDamage(player, distance) {
         if (distance < this.radius) {
             player.damage(this.damage);
+        }
+    }
+
+    update(delta) {
+        if (delta - this.thrownDelta >= this.fuseTime && !this.exploded) {
+            this.explode();
         }
     }
 }

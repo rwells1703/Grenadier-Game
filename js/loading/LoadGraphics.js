@@ -13,7 +13,7 @@ export function loadSounds(scene) {
 
 export function parseSpriteSheets(scene) {
     parseGenericSpriteSheet(scene, 'ConcussionGrenade', 1, 1);
-    parseGenericSpriteSheet(scene, 'Explosion', 4, 1);
+    parseGenericSpriteSheet(scene, 'Explosion', 4, 8);
     parseGenericSpriteSheet(scene, 'Platform', 1, 1);
     parsePlayerSpriteSheet(scene, 'Player', 8, true);
 }

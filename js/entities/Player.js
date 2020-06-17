@@ -1,76 +1,54 @@
-import { PlayerGeneric } from './PlayerGeneric.js';
-import { Grenade } from './Grenade.js';
+import { Entity } from './Entity.js';
 
-export class Player extends PlayerGeneric {
+export class Player extends Entity {
     constructor (scene, xPos, yPos, id) {
-        super(scene, xPos, yPos, id);
+        super(scene, xPos, yPos, 'Player', false);
 
-        // Increments every time a grenade is thrown
-        this.grenadeId = 0;
-    
-        this.grenadeTimer = 0;
-        this.prevGrenadeTimer = 0;
+        this.scale = 0.25;
 
-        // Throw a grenade
-        scene.input.on('pointerdown', pointer => {
-            this.throwGrenade(pointer.worldX, pointer.worldY, "ConcussionGrenade");
+        this.id = id;
+        this.health = 15;
+        this.direction = 'R';
 
-            // Reset the timer
-            this.prevGrenadeTimer = this.grenadeTimer;
+        this.MOVE_FORCE = 500;
+        this.DRAG = 2000;
 
-            // If enough time has passed since the last grenade was thrown
-            /*if (this.grenadeTimer - this.prevGrenadeTimer > this.GRENADE_THROW_TIMEOUT) {
+        this.GRENADE_THROW_SPEED = 1000;
+        this.GRENADE_THROW_TIMEOUT = 1000;
+        this.GRENADE_THROW_RANGE = 300;
 
-            }*/
-        });
+        this.body.drag.x = this.DRAG;
+        this.body.drag.y = this.DRAG;
+
+        this.grenades = scene.physics.add.group();
     }
 
-    throwGrenade(xTarget, yTarget, grenadeType) {
-        let xDistance = xTarget - this.x;
-        let yDistance = yTarget - this.y;
-        let distance = Math.sqrt(xDistance**2 + yDistance**2);
+    damage(damageValue) {
+        this.health -= damageValue;
 
-        let speedCoefficient = distance / this.GRENADE_THROW_RANGE;
-
-        // If they are throwing outside the range
-        if (speedCoefficient > 1) {
-            speedCoefficient = 1;
+        if (this.health <= 0) {
+            if (this.id == this.scene.player.id) {
+                this.scene.scene.start('LoseScene');
+                this.scene.gameOver = true;
+                this.scene.events.off();
+                this.scene.registry.destroy();
+            }
+            
+            this.destroy();
         }
-
-        let xVel = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.x;
-        let yVel = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient;// + this.body.velocity.y;
-
-        let grenade = new Grenade(this.scene, this.x, this.y, grenadeType, this.grenadeId, this, xVel, yVel);
-
-        let newGrenade = {
-            grenadeId: grenade.id,
-            xPos: this.x,
-            yPos: this.y,
-            xVel: xVel,
-            yVel: yVel
-        };
-
-        this.scene.socket.emit('thisPlayerThrowGrenade', newGrenade);
-
-        this.grenadeId += 1;
     }
 
-    update(delta) {
-        if (this.scene.keys["A"].isDown && !this.body.blocked.left) {
-            this.body.velocity.x = -this.MOVE_FORCE;
-        } else if (this.scene.keys["D"].isDown && !this.body.blocked.right) {
-            this.body.velocity.x = this.MOVE_FORCE;
+    update() {
+        if (this.body.velocity.x > 0) {
+            this.direction = 'R';
+            this.movement = 'Moving'
+        } else if (this.body.velocity.x < 0) {
+            this.direction = 'L';
+            this.movement = 'Moving';
+        } else {
+            this.movement = 'Stationary';
         }
 
-        if (this.scene.keys["W"].isDown) {
-            this.body.velocity.y = -this.MOVE_FORCE;
-        } else if (this.scene.keys["S"].isDown) {
-            this.body.velocity.y = this.MOVE_FORCE;
-        }
-
-        // Update the timer for throwing a grenade
-        this.grenadeTimer = delta;
-
-        super.update();
+        this.updateGraphics();
     }
 }
