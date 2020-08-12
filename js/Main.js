@@ -1,4 +1,4 @@
-import { WINDOW_WIDTH, WINDOW_HEIGHT } from './Constants.js';
+import { WINDOW_WIDTH, WINDOW_HEIGHT, MUTED } from './Constants.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { GameScene } from './scenes/GameScene.js';
 import { DisconnectedScene } from './scenes/DisconnectedScene.js';
@@ -13,7 +13,7 @@ let config = {
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
     scene: [ MenuScene, GameScene, LoseScene, DisconnectedScene ],
-    audio: { noAudio: true }
+    audio: { noAudio: MUTED }
 };
 
-let game = new Phaser.Game(config);
+new Phaser.Game(config);

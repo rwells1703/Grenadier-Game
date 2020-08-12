@@ -8,7 +8,7 @@ export function loadImages(scene) {
 }
 
 export function loadSounds(scene) {
-    scene.load.audio('ButtonSound', 'assets/sounds/to.wav');
+    scene.load.audio('ButtonSound', 'assets/sounds/button.wav');
 }
 
 export function parseSpriteSheets(scene) {

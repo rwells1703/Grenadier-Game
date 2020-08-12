@@ -1,5 +1,5 @@
 import { TEXTURE_SIZE, DEBUG } from '../Constants.js';
-import { loadImages, loadSounds, parseSpriteSheets } from '../loading/LoadGraphics.js';
+import { loadImages, loadSounds, parseSpriteSheets } from '../loading/LoadAssets.js';
 import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
 import { PlayerEnemy } from '../entities/PlayerEnemy.js';
 import { PlayerThis } from '../entities/PlayerThis.js';

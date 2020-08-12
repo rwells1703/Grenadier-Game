@@ -1,5 +1,5 @@
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../Constants.js';
-import { loadImages, loadSounds } from '../loading/LoadGraphics.js';
+import { loadImages, loadSounds } from '../loading/LoadAssets.js';
 
 export class MenuScene extends Phaser.Scene {
     constructor() {
@@ -34,10 +34,6 @@ export class MenuScene extends Phaser.Scene {
                 });
                 this.backButton.on('pointerdown', () => {
                     this.btnSoundFX.play();
-                    //let gameScene = this.scene.get('GameScene');
-                    //gameScene.registry.destroy();
-                    //gameScene.events.off();
-                    //gameScene.scene.restart({mapName: 'alpha'});
                     this.scene.start('GameScene', {mapName: 'alpha'});
                 });
             }

@@ -1,5 +1,5 @@
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../Constants.js';
-import { loadImages, loadSounds } from '../loading/LoadGraphics.js';
+import { loadImages, loadSounds } from '../loading/LoadAssets.js';
 
 export class DisconnectedScene extends Phaser.Scene {
     constructor() {
