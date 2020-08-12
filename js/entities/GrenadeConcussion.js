@@ -7,7 +7,7 @@ export class GrenadeConcussion extends Grenade {
 
         this.fuseTime = 1000;
         this.radius = 128;
-        this.damage = 30;
+        this.damage = 40;
         this.explosionDuration = 500;
 
         this.body.drag.x = this.body.drag.y = 1000;
@@ -18,9 +18,9 @@ export class GrenadeConcussion extends Grenade {
     explode() {
         let distance = this.getDistanceFromPoint(this.scene.player.x, this.scene.player.y);
 
-        let cameraShakeRadius = 512;
+        let cameraShakeRadius = 256;
         if (distance <= cameraShakeRadius) {
-            this.scene.cameras.main.shake(cameraShakeRadius/distance*200, 0.01);
+            this.scene.cameras.main.shake(200, cameraShakeRadius/distance*0.005);
         }
 
         new Explosion(this.scene, this.x, this.y, 'ExplosionConcussion', this.explosionDuration);
