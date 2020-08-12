@@ -57,15 +57,15 @@ export class PlayerThis extends Player {
     }
 
     update(delta) {
-        if (this.scene.keys["A"].isDown && !this.body.blocked.left) {
+        if ((this.scene.keys["A"].isDown || this.scene.joyStick.left) && !this.body.blocked.left) {
             this.body.velocity.x = -this.MOVE_FORCE;
-        } else if (this.scene.keys["D"].isDown && !this.body.blocked.right) {
+        } else if ((this.scene.keys["D"].isDown || this.scene.joyStick.right) && !this.body.blocked.right) {
             this.body.velocity.x = this.MOVE_FORCE;
         }
 
-        if (this.scene.keys["W"].isDown) {
+        if (this.scene.keys["W"].isDown || this.scene.joyStick.up) {
             this.body.velocity.y = -this.MOVE_FORCE;
-        } else if (this.scene.keys["S"].isDown) {
+        } else if (this.scene.keys["S"].isDown || this.scene.joyStick.down) {
             this.body.velocity.y = this.MOVE_FORCE;
         }
 

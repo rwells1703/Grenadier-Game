@@ -15,7 +15,7 @@ export class MenuScene extends Phaser.Scene {
 
     create() {
         if (SKIP_MENU) {
-            this.scene.start('GameScene', {mapName: 'alpha'});
+            this.scene.start('GameScene', {mapName: 'alpha', useJoyStick: false});
         }
         
         this.add.tileSprite(0, 0, 2*WINDOW_WIDTH, 2*WINDOW_HEIGHT, 'Background');
@@ -38,7 +38,31 @@ export class MenuScene extends Phaser.Scene {
                 });
                 this.backButton.on('pointerdown', () => {
                     this.btnSoundFX.play();
-                    this.scene.start('GameScene', {mapName: 'alpha'});
+                    this.scene.start('GameScene', {mapName: 'alpha', useJoyStick: this.useJoyStick});
+                });
+
+                this.fullScreenButton = this.add.text(1150, 50, '⛶', {font: '85px Roboto Mono', color: '#000000'});
+                this.fullScreenButton.setInteractive();
+                this.fullScreenButton.on('pointerdown', () => {
+                    if (this.scale.isFullscreen) {
+                        this.scale.stopFullscreen();
+                        this.fullScreenButton.setColor('#000000');
+                    } else {
+                        this.scale.startFullscreen();
+                        this.fullScreenButton.setColor('#326ba8');
+                    }
+                });
+
+                this.useJoyStick = false;
+                this.toggleJoyStickButton = this.add.text(1160, 150, '+', {font: '85px Roboto Mono', color: '#000000'});
+                this.toggleJoyStickButton.setInteractive();
+                this.toggleJoyStickButton.on('pointerdown', () => {
+                    this.useJoyStick = !this.useJoyStick;
+                    if (this.useJoyStick) {
+                        this.toggleJoyStickButton.setColor('#326ba8');
+                    } else {
+                        this.toggleJoyStickButton.setColor('#000000');
+                    }
                 });
             }
         });

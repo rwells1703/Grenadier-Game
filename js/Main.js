@@ -4,6 +4,7 @@ import { GameScene } from './scenes/GameScene.js';
 import { DisconnectedScene } from './scenes/DisconnectedScene.js';
 import { LoseScene } from './scenes/LoseScene.js';
 
+
 let config = {
     type: Phaser.AUTO,
     scale: {
@@ -16,4 +17,4 @@ let config = {
     audio: { noAudio: MUTED }
 };
 
-new Phaser.Game(config);
+let game = new Phaser.Game(config);

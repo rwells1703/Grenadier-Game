@@ -20,12 +20,15 @@ export class GameScene extends Phaser.Scene {
     init(data) {
         // Gets the map name from the menu
         this.mapName = data.mapName;
+        this.useJoyStick = data.useJoyStick;
     }
 
     preload() {
         loadImages(this);
         loadSounds(this);
         loadMapBmp(this);
+
+        this.load.plugin('rexvirtualjoystickplugin', 'js/libraries/rexvirtualjoystickplugin.min.js', true);
     }
 
     create() {
@@ -42,6 +45,18 @@ export class GameScene extends Phaser.Scene {
         this.otherPlayers = this.physics.add.group();
 
         this.healthBar = new HealthBar(this);
+    
+        // Add another pointer to allow multitouch on mobile (2 fingers)
+        this.input.addPointer();
+
+        this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+            x: 200,
+            y: 450,
+            radius: 100,
+            base: this.add.circle(0, 0, 100, 0x888888, 0.5*this.useJoyStick),
+            thumb: this.add.circle(0, 0, 50, 0xcccccc, 0.5*this.useJoyStick),
+            enable: this.useJoyStick
+        });
 
         let [map_width, map_height] = loadMap(this, this.mapName);
 
