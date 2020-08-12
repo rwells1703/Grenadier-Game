@@ -30,6 +30,8 @@ export class GameScene extends Phaser.Scene {
     create() {
         parseSpriteSheets(this);
 
+        this.graphics = this.add.graphics();
+
         this.gameOver = false;
 
         this.updateCounter = 0;
@@ -125,6 +127,8 @@ export class GameScene extends Phaser.Scene {
     update(delta) {
         if (this.connected) {
             if (!this.gameOver) {
+                this.graphics.clear();
+                
                 // Handles keyboard input every frame
                 this.player.update(delta);
                 

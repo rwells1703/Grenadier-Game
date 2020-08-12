@@ -4,7 +4,7 @@ export function loadImages(scene) {
     scene.load.spritesheet('ConcussionGrenade', 'assets/sprites/entities/grenade.png', {frameWidth: 30, frameHeight: 30});
     scene.load.spritesheet('Platform', 'assets/sprites/entities/platform.png', {frameWidth: 64, frameHeight: 64})
     scene.load.spritesheet('Player', 'assets/sprites/entities/player.png', {frameWidth: 256, frameHeight: 256});
-    scene.load.spritesheet('Explosion', 'assets/sprites/entities/explosion.png', {frameWidth: 64, frameHeight: 64});
+    scene.load.spritesheet('ExplosionConcussion', 'assets/sprites/entities/explosion_concussion.png', {frameWidth: 64, frameHeight: 64});
 }
 
 export function loadSounds(scene) {
@@ -13,7 +13,7 @@ export function loadSounds(scene) {
 
 export function parseSpriteSheets(scene) {
     parseGenericSpriteSheet(scene, 'ConcussionGrenade', 1, 1);
-    parseGenericSpriteSheet(scene, 'Explosion', 4, 8);
+    parseGenericSpriteSheet(scene, 'ExplosionConcussion', 4, 8);
     parseGenericSpriteSheet(scene, 'Platform', 1, 1);
     parsePlayerSpriteSheet(scene, 'Player', 8, true);
 }

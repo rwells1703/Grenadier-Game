@@ -1,5 +1,5 @@
 import { Player } from './Player.js';
-import { Grenade } from './Grenade.js';
+import { GrenadeConcussion } from './GrenadeConcussion.js';
 
 export class PlayerThis extends Player {
     constructor (scene, xPos, yPos, id) {
@@ -9,7 +9,7 @@ export class PlayerThis extends Player {
         this.grenadeId = 0;
     
         this.GRENADE_THROW_SPEED = 1000;
-        this.GRENADE_THROW_TIMEOUT = 500;
+        this.GRENADE_THROW_TIMEOUT = 400;
         this.GRENADE_THROW_RANGE = 300;
 
         this.throwGrenadeDelta = 0;
@@ -41,7 +41,7 @@ export class PlayerThis extends Player {
         let xVel = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient + this.body.velocity.x;
         let yVel = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient + this.body.velocity.y;
 
-        let grenade = new Grenade(this.scene, this.x, this.y, grenadeType, this.grenadeId, this, xVel, yVel);
+        let grenade = new GrenadeConcussion(this.scene, this.x, this.y, this.grenadeId, this, xVel, yVel);
 
         let newGrenade = {
             grenadeId: grenade.id,

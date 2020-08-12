@@ -18,26 +18,11 @@ export class Grenade extends Entity {
         this.body.velocity.x = xVel;
         this.body.velocity.y = yVel;
 
-        let drag, bounce, maxBounces;
-        if (grenadeType == "ConcussionGrenade") {
-            drag = 1000;
-            bounce = 0.6;
-            maxBounces = 3;
-            this.fuseTime = 1500;
-            this.radius = 64;
-            this.damage = 5;
-        }
-
-        this.body.drag.x = drag;
-        this.body.drag.y = drag;
-
-        this.body.setBounce(bounce);
-
-        this.GRENADE_MAX_BOUNCES = maxBounces;
         this.bounceCount = 0;
 
         this.exploded = false;
         this.thrownDelta = scene.time.now;
+
     }
 
     addBounce() {
@@ -48,43 +33,38 @@ export class Grenade extends Entity {
         }
     }
 
-    explode() {
+    explode(distance) {
         this.exploded = true;
-        let distance = this.getDistanceFromPoint(this.scene.player.x, this.scene.player.y);
+
+        this.visible = false;
+        this.body.velocity.x = 0;
+        this.body.velocity.y = 0;
 
         this.applyDamage(this.scene.player, distance);
-
-        let cameraShakeRadius = 448;
-        if (distance <= cameraShakeRadius) {
-            this.scene.cameras.main.shake(cameraShakeRadius/distance*200, 0.01);
-        }
 
         for (let otherPlayer of this.scene.otherPlayers.getChildren()) {
             distance = this.getDistanceFromPoint(otherPlayer.x, otherPlayer.y);
             this.applyDamage(otherPlayer, distance);
         }
 
-        this.play('Explosion', true);
-        this.rotation = 0;
-        this.body.angularVelocity = 0;
-        this.scale = 1;
 
         this.scene.time.addEvent({
-            delay: 500,
+            delay: this.explosionDuration,
             callback: this.destroy,
             callbackScope: this
         });
     }
 
-    applyDamage(player, distance) {
-        if (distance < this.radius) {
-            player.damage(this.damage);
-        }
-    }
-
     update(delta) {
         if (delta - this.thrownDelta >= this.fuseTime && !this.exploded) {
             this.explode();
+        }
+
+        if (this.exploded) {
+            this.drawnRadius = new Phaser.Geom.Circle(this.body.x, this.body.y, this.radius);
+            this.scene.graphics.fillStyle(0xFFFFFF, 0.3);
+            this.drawnRadius.setTo(this.body.x, this.body.y, this.radius);
+            this.scene.graphics.fillCircleShape(this.drawnRadius);
         }
     }
 }

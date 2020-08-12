@@ -63,7 +63,8 @@ function positionToPx(position) {
 export function loadMap(scene, mapKey) {
     let mapDataView = scene.cache.binary.get(mapKey);
     let map = readMapData(mapDataView);
-    scene.add.tileSprite(0, 0, 2*map.width*TEXTURE_SIZE, 2*map.height*TEXTURE_SIZE, 'Background');
+    let bg = scene.add.tileSprite(0, 0, 2*map.width*TEXTURE_SIZE, 2*map.height*TEXTURE_SIZE, 'Background');
+    bg.depth = -1;
 
     let i = 0;
     while (i < map.height) {

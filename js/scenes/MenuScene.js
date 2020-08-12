@@ -1,4 +1,4 @@
-import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../Constants.js';
+import { WINDOW_WIDTH, WINDOW_HEIGHT, SKIP_MENU } from '../Constants.js';
 import { loadImages, loadSounds } from '../loading/LoadAssets.js';
 
 export class MenuScene extends Phaser.Scene {
@@ -14,6 +14,10 @@ export class MenuScene extends Phaser.Scene {
     }
 
     create() {
+        if (SKIP_MENU) {
+            this.scene.start('GameScene', {mapName: 'alpha'});
+        }
+        
         this.add.tileSprite(0, 0, 2*WINDOW_WIDTH, 2*WINDOW_HEIGHT, 'Background');
         
         WebFont.load({

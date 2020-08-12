@@ -7,7 +7,7 @@ export class Entity extends Phaser.GameObjects.Sprite {
     }
 
     updateGraphics() {
-        this.play(this.texture.key + this.direction + this.movement, true);
+        this.play(this.texture.key, true);
     }
 
     getDistanceFromPoint(x, y) {

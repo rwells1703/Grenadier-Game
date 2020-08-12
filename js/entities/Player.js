@@ -7,7 +7,7 @@ export class Player extends Entity {
         this.scale = 0.25;
 
         this.id = id;
-        this.health = 15;
+        this.health = 100;
         this.direction = 'R';
 
         this.MOVE_FORCE = 500;
@@ -36,6 +36,10 @@ export class Player extends Entity {
         }
     }
 
+    updateGraphics() {
+        this.play(this.texture.key + this.direction + this.movement, true);
+    }
+    
     update() {
         if (this.body.velocity.x > 0) {
             this.direction = 'R';
