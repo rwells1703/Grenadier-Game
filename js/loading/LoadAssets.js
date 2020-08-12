@@ -5,6 +5,9 @@ export function loadImages(scene) {
     scene.load.spritesheet('Platform', 'assets/sprites/entities/platform.png', {frameWidth: 64, frameHeight: 64})
     scene.load.spritesheet('Player', 'assets/sprites/entities/player.png', {frameWidth: 256, frameHeight: 256});
     scene.load.spritesheet('ExplosionConcussion', 'assets/sprites/entities/explosion_concussion.png', {frameWidth: 64, frameHeight: 64});
+
+    scene.load.image('HealthBar', 'assets/sprites/hud/health_bar/health_bar.png');
+    scene.load.image('HealthBarOutline', 'assets/sprites/hud/health_bar/health_bar_outline.png');
 }
 
 export function loadSounds(scene) {

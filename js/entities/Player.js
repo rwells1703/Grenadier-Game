@@ -7,7 +7,8 @@ export class Player extends Entity {
         this.scale = 0.25;
 
         this.id = id;
-        this.health = 100;
+        this.healthMax = 100;
+        this.health = this.healthMax;;
         this.direction = 'R';
 
         this.MOVE_FORCE = 500;

@@ -7,7 +7,7 @@ export class GrenadeConcussion extends Grenade {
 
         this.fuseTime = 1000;
         this.radius = 128;
-        this.damage = 200;
+        this.damage = 30;
         this.explosionDuration = 500;
 
         this.body.drag.x = this.body.drag.y = 1000;
@@ -30,7 +30,7 @@ export class GrenadeConcussion extends Grenade {
 
     applyDamage(player, distance) {
         if (distance < this.radius) {
-            player.damage(this.damage);
+            player.damage(this.damage*(distance/this.radius));
         }
     }
 }

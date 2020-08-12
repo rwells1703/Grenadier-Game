@@ -4,6 +4,7 @@ import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
 import { PlayerEnemy } from '../entities/PlayerEnemy.js';
 import { PlayerThis } from '../entities/PlayerThis.js';
 import { Grenade } from '../entities/Grenade.js';
+import { HealthBar } from '../hud/HealthBar.js';
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -39,6 +40,8 @@ export class GameScene extends Phaser.Scene {
         this.platforms = this.physics.add.staticGroup();
         this.grenades = this.physics.add.group();
         this.otherPlayers = this.physics.add.group();
+
+        this.healthBar = new HealthBar(this);
 
         let [map_width, map_height] = loadMap(this, this.mapName);
 
@@ -153,6 +156,8 @@ export class GameScene extends Phaser.Scene {
                 for (let grenade of this.grenades.getChildren()) {
                     grenade.update(delta);
                 }
+
+                this.healthBar.setPercent(this.player.health/this.player.healthMax);
             } else {
                 // If the map has been completed
                 this.registry.destroy();
