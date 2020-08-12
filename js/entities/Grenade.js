@@ -18,7 +18,7 @@ export class Grenade extends Entity {
         this.body.velocity.x = xVel;
         this.body.velocity.y = yVel;
 
-        let drag, bounce, maxBounces, fuseTime;
+        let drag, bounce, maxBounces;
         if (grenadeType == "ConcussionGrenade") {
             drag = 1000;
             bounce = 0.6;

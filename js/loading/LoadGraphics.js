@@ -28,21 +28,21 @@ function parsePlayerSpriteSheet(scene, spritesheetKey, frameRate) {
 
     scene.anims.create({
         key: spritesheetKey + 'RStationary',
-        frames: scene.anims.generateFrameNumbers(spritesheetKey, {start: 7, end: 7}),
+        frames: scene.anims.generateFrameNumbers(spritesheetKey, {start: 0, end: 0}),
         frameRate: frameRate,
         repeat: -1
     });
 
     scene.anims.create({
         key: spritesheetKey + 'LMoving',
-        frames: scene.anims.generateFrameNumbers(spritesheetKey, {start: 8, end: 15}),
+        frames: scene.anims.generateFrameNumbers(spritesheetKey, {start: 15, end: 8}),
         frameRate: frameRate,
         repeat: -1
     });
 
     scene.anims.create({
         key: spritesheetKey + 'LStationary',
-        frames: scene.anims.generateFrameNumbers(spritesheetKey, {start: 8, end: 8}),
+        frames: scene.anims.generateFrameNumbers(spritesheetKey, {start: 15, end: 15}),
         frameRate: frameRate,
         repeat: -1
     });

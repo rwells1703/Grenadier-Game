@@ -1,4 +1,4 @@
-import { TEXTURE_SIZE } from '../Constants.js';
+import { TEXTURE_SIZE, DEBUG } from '../Constants.js';
 import { loadImages, loadSounds, parseSpriteSheets } from '../loading/LoadGraphics.js';
 import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
 import { PlayerEnemy } from '../entities/PlayerEnemy.js';
@@ -11,7 +11,7 @@ export class GameScene extends Phaser.Scene {
             key: 'GameScene',
             physics: {
                 default: 'arcade',
-                arcade: {debug: true}
+                arcade: {debug: DEBUG}
             }
         });
     }
