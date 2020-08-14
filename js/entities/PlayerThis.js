@@ -16,12 +16,16 @@ export class PlayerThis extends Player {
 
         // Throw a grenade
         scene.input.on('pointerdown', pointer => {
-            // If enough time has passed since the last grenade was thrown
-            if (scene.time.now - this.throwGrenadeDelta >= this.GRENADE_THROW_TIMEOUT) {
-                // Reset the timer
-                this.throwGrenadeDelta = scene.time.now;
+            // Disables grenade throws within joystick (if joystick is enabled)
+            let clickedOnJoyStick = this.scene.joyStick.base.geom.contains(pointer.x-this.scene.joyStick.base.x, pointer.y-this.scene.joyStick.base.y);
+            if (!this.scene.useJoyStick || !clickedOnJoyStick) {
+                // If enough time has passed since the last grenade was thrown
+                if (scene.time.now - this.throwGrenadeDelta >= this.GRENADE_THROW_TIMEOUT) {
+                    // Reset the timer
+                    this.throwGrenadeDelta = scene.time.now;
 
-                this.throwGrenade(pointer.worldX, pointer.worldY, "ConcussionGrenade");
+                    this.throwGrenade(pointer.worldX, pointer.worldY, "ConcussionGrenade");
+                }
             }
         });
     }
