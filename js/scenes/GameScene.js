@@ -3,7 +3,7 @@ import { loadImages, loadSounds, parseSpriteSheets } from '../loading/LoadAssets
 import { loadMapBmp, loadMap } from '../loading/LoadMap.js';
 import { PlayerEnemy } from '../entities/PlayerEnemy.js';
 import { PlayerThis } from '../entities/PlayerThis.js';
-import { Grenade } from '../entities/Grenade.js';
+import { GrenadeConcussion } from '../entities/GrenadeConcussion.js';
 import { HealthBar } from '../hud/HealthBar.js';
 
 export class GameScene extends Phaser.Scene {
@@ -122,11 +122,10 @@ export class GameScene extends Phaser.Scene {
         this.socket.on('otherPlayerThrowGrenade', newGrenade => {
             for (let otherPlayer of this.otherPlayers.getChildren()) {
                 if (newGrenade.playerId == otherPlayer.id) {
-                    new Grenade(
+                    new GrenadeConcussion(
                         this,
                         newGrenade.xPos,
                         newGrenade.yPos,
-                        'ConcussionGrenade',
                         newGrenade.grenadeId,
                         otherPlayer,
                         newGrenade.xVel,
