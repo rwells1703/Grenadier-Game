@@ -42,6 +42,16 @@ export class Player extends Entity {
     }
     
     update() {
+        // Stops player quicker
+        if (Math.abs(this.body.velocity.x) <= 0.1) {
+            this.body.velocity.x = 0;
+        }
+
+        if (Math.abs(this.body.velocity.y) <= 0.1) {
+            this.body.velocity.y = 0;
+        }
+
+        // Sets correct animation for player movement
         if (this.body.velocity.x > 0) {
             this.direction = 'R';
             this.movement = 'Moving';
