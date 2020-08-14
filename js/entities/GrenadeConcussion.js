@@ -10,7 +10,7 @@ export class GrenadeConcussion extends Grenade {
         this.damage = 40;
         this.explosionDuration = 500;
 
-        this.body.drag.x = this.body.drag.y = 1000;
+        this.body.drag.x = this.body.drag.y = 3000;
         this.body.setBounce(0.6);
         this.GRENADE_MAX_BOUNCES = 3;
     }

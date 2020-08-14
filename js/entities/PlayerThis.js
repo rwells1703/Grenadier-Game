@@ -35,37 +35,12 @@ export class PlayerThis extends Player {
         let xDistance = xTarget - this.x;
         let yDistance = yTarget - this.y;
 
-        if (xDistance > this.GRENADE_THROW_RANGE) {
-            xDistance = this.GRENADE_THROW_RANGE;
-        }
+        let xDirection = xDistance/Math.abs(xDistance);
+        let yDirection = yDistance/Math.abs(yDistance);
 
-        if (xDistance < -this.GRENADE_THROW_RANGE) {
-            xDistance = -this.GRENADE_THROW_RANGE;
-        }
-
-        
-        if (yDistance > this.GRENADE_THROW_RANGE) {
-            yDistance = this.GRENADE_THROW_RANGE;
-        }
-
-        if (yDistance < -this.GRENADE_THROW_RANGE) {
-            yDistance = -this.GRENADE_THROW_RANGE;
-        }
-
-        console.log(xDistance, yDistance);
-        /*let distance = Math.sqrt(xDistance**2 + yDistance**2);
-
-        let speedCoefficient = distance / this.GRENADE_THROW_RANGE;
-
-        // If they are throwing outside the range
-        if (speedCoefficient > 1) {
-            speedCoefficient = 1;
-        }*/
-
-        let xVel = xDistance * this.GRENADE_THROW_SPEED;
-        let yVel = yDistance * this.GRENADE_THROW_SPEED;
-        //let xVel = xDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient + this.body.velocity.x;
-        //let yVel = yDistance/distance * this.GRENADE_THROW_SPEED * speedCoefficient + this.body.velocity.y;
+        console.log(this.scene.player);
+        let xVel = xDirection * Math.sqrt(Math.abs(2*this.body.drag.x*xDistance)) + this.scene.player.body.velocity.x;
+        let yVel = yDirection * Math.sqrt(Math.abs(2*this.body.drag.y*yDistance)) + this.scene.player.body.velocity.y;
 
         let grenade;
         if (grenadeType == 'ConcussionGrenade') {
